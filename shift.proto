@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message CmdMsg {
+  enum Command {
+    HealthCheck = 0;
+    SetPin = 1;
+    SetByte = 2;
+    Reset = 3;
+  }
+
+  Command cmd = 1;
+  bytes data = 2;
+}
+
