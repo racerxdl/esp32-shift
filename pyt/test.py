@@ -21,52 +21,52 @@ def CheckInput():
     for line in lines:
       print line.split("\n")[0]
 
-time.sleep(1)
 CheckInput()
 
-print "Resetting"
+print "HealthCheck"
 x = CmdMsg()
-x.cmd = CmdMsg.Reset
+x.cmd = CmdMsg.HealthCheck
 SendMessage(x)
 
-time.sleep(1)
+time.sleep(0.1)
 CheckInput()
 
-# x.cmd = CmdMsg.SetPin
-# x.devAddr = addr
-# x.data = "\x00\x00"
-# SendMessage(x)
-
-# lastState = False
-# print "Looping"
 # while True:
-#   x.cmd = CmdMsg.HealthCheck
-#   x.devAddr = addr
-#   x.data = "A"
-#   SendMessage(x)
-
-#   # x.cmd = CmdMsg.SetGPIOAB
-#   # x.data = "\xFF\xFF"
-#   # x.data = "\xFF" if lastState else "\x00"
-#   # x.data = "\xFF"
-#   # x.data += "\xFF" if lastState else "\x00"
-#   # SendMessage(x)
-
+#   x = CmdMsg()
 #   x.cmd = CmdMsg.SetPin
-#   x.data = chr(12)
-#   x.data += "\x01" if lastState else "\x00"
+#   x.data = chr(0) + chr(1)
 #   SendMessage(x)
-
-#   # for i in range(9):
-#   #   x.cmd = CmdMsg.SetPin
-#   #   x.devAddr = addr
-#   #   x.data = chr(i)
-#   #   if lastState:
-#   #     x.data += "\x01"
-#   #   else:
-#   #     x.data += "\x00"
-#   #   SendMessage(x)
-
-#   lastState = not lastState
-
 #   time.sleep(0.5)
+#   CheckInput()
+#   x = CmdMsg()
+#   x.cmd = CmdMsg.SetPin
+#   x.data = chr(0) + chr(0)
+#   SendMessage(x)
+#   time.sleep(0.5)
+#   CheckInput()
+
+while True:
+  # Set to 1010 1010
+  x = CmdMsg()
+  x.cmd = CmdMsg.SetByte
+  x.data = chr(0) + chr(0b1111000)
+  SendMessage(x)
+  time.sleep(0.5)
+  CheckInput()
+
+  # Set to 0101 0101
+  x = CmdMsg()
+  x.cmd = CmdMsg.SetByte
+  x.data = chr(0) + chr(0b0000111)
+  SendMessage(x)
+  time.sleep(0.5)
+  CheckInput()
+  time.sleep(1)
+
+  # Reset
+  x = CmdMsg()
+  x.cmd = CmdMsg.Reset
+  SendMessage(x)
+  time.sleep(0.1)
+  CheckInput()
+  time.sleep(1)

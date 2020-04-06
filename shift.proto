@@ -2,10 +2,10 @@ syntax = "proto3";
 
 message CmdMsg {
   enum Command {
-    HealthCheck = 0;
-    SetPin = 1;
-    SetByte = 2;
-    Reset = 3;
+    HealthCheck = 0; // Expect Nothing.                     Returns OK
+    SetPin = 1;      // Expect 2 bytes. [Pin, Val].         Returns OK
+    SetByte = 2;     // Expect 2 bytes. [Num, Val].         Returns OK
+    Reset = 3;       // Expect Nothing. Clears all states.  Returns OK
   }
 
   Command cmd = 1;
