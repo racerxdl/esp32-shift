@@ -7,9 +7,12 @@
 #include "pb.h"
 #include "pb_decode.h"
 
+#define ONBOARD_LED 2
+#define OUTPUT_ENABLE 14
+#define RESET 27
 #define LATCH 13
 #define MAX_BYTES 128
-#define NUM_REGISTERS 2
+#define NUM_REGISTERS 4
 #define NUM_BITS (NUM_REGISTERS * 8)
 
 uint8_t states[NUM_BITS];
@@ -35,7 +38,14 @@ void setup() {
 
   // put your setup code here, to run once:
   pinMode(LATCH, OUTPUT);
+  pinMode(OUTPUT_ENABLE, OUTPUT);
+  pinMode(RESET, OUTPUT);
+  pinMode(ONBOARD_LED, OUTPUT);
+  
   clear();
+  digitalWrite(OUTPUT_ENABLE, HIGH);
+  digitalWrite(RESET, HIGH);
+  digitalWrite(ONBOARD_LED, LOW);
 }
 
 void clear() {
@@ -76,6 +86,7 @@ void latch() {
   delayMicroseconds(1);
   digitalWrite(LATCH, LOW);
   delayMicroseconds(1);
+  digitalWrite(OUTPUT_ENABLE, LOW);
 }
 
 void CmdReset() {
@@ -115,8 +126,12 @@ void CmdSetByte(uint8_t *data) {
   Serial.println(val, BIN);
 }
 
+long lastHC = millis();
+
 void CmdHealthCheck() {
   Serial.println("( OK) Health Check OK");
+  digitalWrite(ONBOARD_LED, HIGH);
+  lastHC = millis();
 }
 
 void processPayload() {
@@ -172,4 +187,9 @@ void loop() {
   update();
   latch();
   delay(1);
+
+  if (millis() - lastHC >= 10) {
+    digitalWrite(ONBOARD_LED, LOW);
+    lastHC = millis();
+  }
 }

@@ -45,28 +45,56 @@ CheckInput()
 #   time.sleep(0.5)
 #   CheckInput()
 
+lastData = 1
+
 while True:
-  # Set to 1010 1010
   x = CmdMsg()
-  x.cmd = CmdMsg.SetByte
-  x.data = chr(0) + chr(0b1111000)
+  x.cmd = CmdMsg.HealthCheck
   SendMessage(x)
-  time.sleep(0.5)
+
+  x.cmd = CmdMsg.SetByte
+  x.data = chr(0) + chr(lastData & 0xFF)
+  SendMessage(x)
+
+  x.cmd = CmdMsg.SetByte
+  x.data = chr(1) + chr(lastData >> 8)
+  SendMessage(x)
+
+  lastData <<= 1
+  if lastData > 65535:
+    lastData = 1
+  time.sleep(0.01)
   CheckInput()
 
-  # Set to 0101 0101
-  x = CmdMsg()
-  x.cmd = CmdMsg.SetByte
-  x.data = chr(0) + chr(0b0000111)
-  SendMessage(x)
-  time.sleep(0.5)
-  CheckInput()
-  time.sleep(1)
+# while True:
+#   x = CmdMsg()
+#   x.cmd = CmdMsg.HealthCheck
+#   SendMessage(x)
+#   time.sleep(0.01)
+#   CheckInput()
 
-  # Reset
-  x = CmdMsg()
-  x.cmd = CmdMsg.Reset
-  SendMessage(x)
-  time.sleep(0.1)
-  CheckInput()
-  time.sleep(1)
+#   # Set to 1010 1010
+#   x = CmdMsg()
+#   x.cmd = CmdMsg.SetByte
+#   x.data = chr(0) + chr(0b11110000)
+#   SendMessage(x)
+#   time.sleep(0.05)
+#   CheckInput()
+#   time.sleep(1)
+
+#   # Set to 0101 0101
+#   x = CmdMsg()
+#   x.cmd = CmdMsg.SetByte
+#   x.data = chr(0) + chr(0b00001111)
+#   SendMessage(x)
+#   time.sleep(0.05)
+#   CheckInput()
+#   time.sleep(1)
+
+#   # Reset
+#   # x = CmdMsg()
+#   # x.cmd = CmdMsg.Reset
+#   # SendMessage(x)
+#   # time.sleep(0.1)
+#   # CheckInput()
+#   # time.sleep(1)
