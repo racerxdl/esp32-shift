@@ -10,7 +10,7 @@ import (
 var log = slog.Scope("Test Program")
 
 func main() {
-	var status []shift.IOLevel
+	var status shift.BoardStatus
 	esp, err := espshift.MakeESPShift("/dev/ttyUSB0")
 
 	if err != nil {
@@ -20,6 +20,7 @@ func main() {
 	defer esp.Close()
 
 	lastData := 1
+	port := uint8(3)
 
 	for err == nil {
 		err = esp.HealthCheck()
@@ -33,12 +34,23 @@ func main() {
 		}
 
 		log.Info("Board Status: %s", status)
+		//
+		//for i := 0; i < 64; i++ {
+		//	esp.Reset()
+		//	esp.SetPin(uint8(i), shift.HIGH)
+		//	time.Sleep(time.Millisecond * 10)
+		//	d := esp.ReadAllLines()
+		//
+		//	for _, v := range d {
+		//		log.Info("[SERIAL] %s", v)
+		//	}
+		//}
 
-		err = esp.SetByte(0, uint8(lastData&0xFF))
+		err = esp.SetByte(port*2+0, uint8(lastData&0xFF))
 		if err != nil {
 			break
 		}
-		err = esp.SetByte(1, uint8(lastData>>8))
+		err = esp.SetByte(port*2+1, uint8(lastData>>8))
 		if err != nil {
 			break
 		}

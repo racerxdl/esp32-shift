@@ -31,8 +31,61 @@ CmdMsg message = CmdMsg_init_default;
 uint8_t buffer[MAX_BYTES];
 uint16_t numBytes = 0;
 
-// Code
 
+// mapIO maps the correct pins from Shift Register to Output
+// 
+// The Relay Board expects this pinout:
+//  --------------------------------------------------
+// | 5V |  2 |  4 |  6 |  8 | 10 | 12 | 14 | 16 | GND |
+// | 5V |  1 |  3 |  5 |  7 |  9 | 11 | 13 | 15 | GND |
+//  --------------------------------------------------
+//
+// But instead we mapped (by ease of soldering) like this:
+//  --------------------------------------------------
+// | 5V |  7 |  6 |  5 |  4 |  3 |  2 |  1 |  0 | GND |
+// | 5V |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | GND |
+//  --------------------------------------------------
+// 
+// So this function receives a IO Pin number and converts to Shift Register Bit number
+uint8_t mapIO(uint8_t iopin) {
+  uint8_t ioPort = iopin / 16;                    // Find which IO Port this pin belongs
+  uint8_t localIoPinNum = iopin - (ioPort * 16);  // Find the local pin number inside this IO Port
+  uint8_t shiftRegisterBitNum;                    // Store the result bit
+
+  // if the IOPort > 1, the shiftregisters are inverted
+  if (ioPort >= 2) {
+    localIoPinNum = 15 - localIoPinNum;
+  }
+  // Say we have for each I/O the Shift Registers A and B
+  // The output will be mapped like this
+  //  --------------------------------------------------
+  // | 5V | A7 | A6 | A5 | A4 | A3 | A2 | A1 | A0 | GND |
+  // | 5V | B0 | B1 | B2 | B3 | B4 | B5 | B6 | B7 | GND |
+  //  --------------------------------------------------
+  //                        to
+  //  --------------------------------------------------
+  // | 5V |  1 |  3 |  5 |  7 |  9 | 11 | 13 | 15 | GND |
+  // | 5V |  0 |  2 |  4 |  6 |  8 | 10 | 12 | 14 | GND |
+  //  --------------------------------------------------
+  //  So the expected IO to Shift mapping is:
+  //    Shift A has odd numbers increasing
+  //    Shift B has even numbers decreasing
+  uint8_t shiftRegisterNum = localIoPinNum % 2; // If odd, shift register 0, if even shift register 1
+  uint8_t inShiftPin = localIoPinNum / 2;       // Now we can map directly
+
+  if ( shiftRegisterNum == 0 ) {                // Register A
+    shiftRegisterBitNum = 7 - inShiftPin;       // Register A just reverse
+  } else {
+    inShiftPin += 1;                            // One bit shifted
+    shiftRegisterBitNum = 7 + inShiftPin;       // Add offset of the second shiftregister
+  }
+  
+  shiftRegisterBitNum += ioPort * 16;           // Add the IO Port offset
+
+  return shiftRegisterBitNum;
+}
+
+// Code
 void setup() {
   Serial.begin(115200);
   Serial.println("(STS) Initializing SPI");
@@ -82,8 +135,11 @@ void updatebstates() {
 }
 
 void updateByte(uint8_t num, uint8_t val) {
+  uint8_t offset = num * 8;
+
   for (int i = 0; i < 8; i++) {
-    states[num*8+i] = val & (1 << i) ? LOW : HIGH;
+    uint8_t shiftpin = mapIO(offset+i);
+    states[shiftpin] = val & (1 << i) ? LOW : HIGH;
   }
 }
 
@@ -119,7 +175,9 @@ void CmdSetPin(uint8_t *data) {
     return;
   }
 
-  states[pin] = val;
+  uint8_t shiftpin = mapIO(pin); // Remap
+
+  states[shiftpin] = val;
   Serial.print("( OK) Pin ");
   Serial.print(pin);
   Serial.print(" state set to ");
