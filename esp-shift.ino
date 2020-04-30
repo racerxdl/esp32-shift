@@ -12,12 +12,15 @@
 #define RESET 27
 #define LATCH 13
 #define MAX_BYTES 128
-#define NUM_REGISTERS 4
+#define NUM_REGISTERS 8
 #define NUM_BITS (NUM_REGISTERS * 8)
 
 uint8_t states[NUM_BITS];
 uint8_t curPos = 0;
 uint8_t bstate[NUM_REGISTERS];
+
+uint8_t connstatus[NUM_REGISTERS/2];
+int     connpins[NUM_REGISTERS/2] = { 34, 35, 22, 33 };
 
 SPIClass * vspi = NULL;
 static const int spiClk = 10000000; // 10 MHz
@@ -32,25 +35,38 @@ uint16_t numBytes = 0;
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Initializing SPI");
+  Serial.println("(STS) Initializing SPI");
   vspi = new SPIClass(VSPI);
   vspi->begin();
 
-  // put your setup code here, to run once:
+  Serial.println("(STS) Setting pin modes");
   pinMode(LATCH, OUTPUT);
   pinMode(OUTPUT_ENABLE, OUTPUT);
   pinMode(RESET, OUTPUT);
   pinMode(ONBOARD_LED, OUTPUT);
+
+  for (int i = 0; i < NUM_REGISTERS/2; i++) {
+    pinMode(connpins[i], INPUT);
+    connstatus[i] = digitalRead(connpins[i]);
+  }
   
+  Serial.println("(STS) Resetting flags");
   clear();
   digitalWrite(OUTPUT_ENABLE, HIGH);
   digitalWrite(RESET, HIGH);
   digitalWrite(ONBOARD_LED, LOW);
+  Serial.println("(STS) READY");
 }
 
 void clear() {
   for (int i = 0; i < NUM_BITS; i++) {
     states[i] = HIGH;
+  }
+}
+
+void updateconn() {
+  for (int i = 0; i < NUM_REGISTERS/2; i++) {
+    connstatus[i] = digitalRead(connpins[i]);
   }
 }
 
@@ -134,6 +150,17 @@ void CmdHealthCheck() {
   lastHC = millis();
 }
 
+void CmdStatus() {
+  Serial.print("( OK) BS[");
+  for (int i = 0; i < NUM_REGISTERS/2; i++) {
+    Serial.print(connstatus[i]);
+    if (i < (NUM_REGISTERS/2)-1) {
+      Serial.print(", ");
+    }
+  }
+  Serial.println("]");
+}
+
 void processPayload() {
   pb_istream_t stream = pb_istream_from_buffer(buffer, numBytes);
   if (!pb_decode(&stream, CmdMsg_fields, &message)) {
@@ -156,6 +183,7 @@ void processPayload() {
       Serial.println("( ERR) Expected 2 bytes for SetByte");
       break;
     case CmdMsg_Command_Reset: return CmdReset();
+    case CmdMsg_Command_Status: return CmdStatus();
   }
 }
 
@@ -186,7 +214,7 @@ void loop() {
   receivePayload();
   update();
   latch();
-  delay(1);
+  updateconn();
 
   if (millis() - lastHC >= 10) {
     digitalWrite(ONBOARD_LED, LOW);

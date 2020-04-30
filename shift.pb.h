@@ -18,7 +18,8 @@ typedef enum _CmdMsg_Command {
     CmdMsg_Command_HealthCheck = 0,
     CmdMsg_Command_SetPin = 1,
     CmdMsg_Command_SetByte = 2,
-    CmdMsg_Command_Reset = 3
+    CmdMsg_Command_Reset = 3,
+    CmdMsg_Command_Status = 4
 } CmdMsg_Command;
 
 /* Struct definitions */
@@ -31,8 +32,8 @@ typedef struct _CmdMsg {
 
 /* Helper constants for enums */
 #define _CmdMsg_Command_MIN CmdMsg_Command_HealthCheck
-#define _CmdMsg_Command_MAX CmdMsg_Command_Reset
-#define _CmdMsg_Command_ARRAYSIZE ((CmdMsg_Command)(CmdMsg_Command_Reset+1))
+#define _CmdMsg_Command_MAX CmdMsg_Command_Status
+#define _CmdMsg_Command_ARRAYSIZE ((CmdMsg_Command)(CmdMsg_Command_Status+1))
 
 
 /* Initializer values for message structs */

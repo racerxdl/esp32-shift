@@ -18,7 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x0bshift.proto\"t\n\x06\x43mdMsg\x12\x1c\n\x03\x63md\x18\x01 \x01(\x0e\x32\x0f.CmdMsg.Command\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\">\n\x07\x43ommand\x12\x0f\n\x0bHealthCheck\x10\x00\x12\n\n\x06SetPin\x10\x01\x12\x0b\n\x07SetByte\x10\x02\x12\t\n\x05Reset\x10\x03\x62\x06proto3'
+  serialized_pb=b'\n\x0bshift.proto\"\x80\x01\n\x06\x43mdMsg\x12\x1c\n\x03\x63md\x18\x01 \x01(\x0e\x32\x0f.CmdMsg.Command\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"J\n\x07\x43ommand\x12\x0f\n\x0bHealthCheck\x10\x00\x12\n\n\x06SetPin\x10\x01\x12\x0b\n\x07SetByte\x10\x02\x12\t\n\x05Reset\x10\x03\x12\n\n\x06Status\x10\x04\x62\x06proto3'
 )
 
 
@@ -45,11 +45,15 @@ _CMDMSG_COMMAND = _descriptor.EnumDescriptor(
       name='Reset', index=3, number=3,
       serialized_options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='Status', index=4, number=4,
+      serialized_options=None,
+      type=None),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=69,
-  serialized_end=131,
+  serialized_start=70,
+  serialized_end=144,
 )
 _sym_db.RegisterEnumDescriptor(_CMDMSG_COMMAND)
 
@@ -88,8 +92,8 @@ _CMDMSG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15,
-  serialized_end=131,
+  serialized_start=16,
+  serialized_end=144,
 )
 
 _CMDMSG.fields_by_name['cmd'].enum_type = _CMDMSG_COMMAND

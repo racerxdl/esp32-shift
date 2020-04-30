@@ -6,6 +6,7 @@ message CmdMsg {
     SetPin = 1;      // Expect 2 bytes. [Pin, Val].         Returns OK
     SetByte = 2;     // Expect 2 bytes. [Num, Val].         Returns OK
     Reset = 3;       // Expect Nothing. Clears all states.  Returns OK
+    Status = 4;      // Expect Nothing                      Returns OK (Status)
   }
 
   Command cmd = 1;

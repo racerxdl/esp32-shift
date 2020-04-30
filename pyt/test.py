@@ -31,25 +31,16 @@ SendMessage(x)
 time.sleep(0.1)
 CheckInput()
 
-# while True:
-#   x = CmdMsg()
-#   x.cmd = CmdMsg.SetPin
-#   x.data = chr(0) + chr(1)
-#   SendMessage(x)
-#   time.sleep(0.5)
-#   CheckInput()
-#   x = CmdMsg()
-#   x.cmd = CmdMsg.SetPin
-#   x.data = chr(0) + chr(0)
-#   SendMessage(x)
-#   time.sleep(0.5)
-#   CheckInput()
 
 lastData = 1
 
 while True:
   x = CmdMsg()
   x.cmd = CmdMsg.HealthCheck
+  SendMessage(x)
+
+  x = CmdMsg()
+  x.cmd = CmdMsg.Status
   SendMessage(x)
 
   x.cmd = CmdMsg.SetByte
