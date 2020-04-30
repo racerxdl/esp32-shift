@@ -23,10 +23,9 @@ typedef enum _CmdMsg_Command {
 } CmdMsg_Command;
 
 /* Struct definitions */
-typedef PB_BYTES_ARRAY_T(2) CmdMsg_data_t;
 typedef struct _CmdMsg {
     CmdMsg_Command cmd;
-    CmdMsg_data_t data;
+    pb_callback_t data;
 } CmdMsg;
 
 
@@ -37,8 +36,8 @@ typedef struct _CmdMsg {
 
 
 /* Initializer values for message structs */
-#define CmdMsg_init_default                      {_CmdMsg_Command_MIN, {0, {0}}}
-#define CmdMsg_init_zero                         {_CmdMsg_Command_MIN, {0, {0}}}
+#define CmdMsg_init_default                      {_CmdMsg_Command_MIN, {{NULL}, NULL}}
+#define CmdMsg_init_zero                         {_CmdMsg_Command_MIN, {{NULL}, NULL}}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define CmdMsg_cmd_tag                           1
@@ -47,8 +46,8 @@ typedef struct _CmdMsg {
 /* Struct field encoding specification for nanopb */
 #define CmdMsg_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UENUM,    cmd,               1) \
-X(a, STATIC,   SINGULAR, BYTES,    data,              2)
-#define CmdMsg_CALLBACK NULL
+X(a, CALLBACK, SINGULAR, BYTES,    data,              2)
+#define CmdMsg_CALLBACK pb_default_field_callback
 #define CmdMsg_DEFAULT NULL
 
 extern const pb_msgdesc_t CmdMsg_msg;
@@ -57,7 +56,7 @@ extern const pb_msgdesc_t CmdMsg_msg;
 #define CmdMsg_fields &CmdMsg_msg
 
 /* Maximum encoded size of messages (where known) */
-#define CmdMsg_size                              6
+/* CmdMsg_size depends on runtime parameters */
 
 #ifdef __cplusplus
 } /* extern "C" */
