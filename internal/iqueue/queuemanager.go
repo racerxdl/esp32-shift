@@ -113,10 +113,11 @@ func (q *queueManager) checkLoop() {
 	}
 }
 
-func (q *queueManager) Close() {
+func (q *queueManager) Close() error {
 	q.l.Lock()
 	q.running = false
 	q.l.Unlock()
+	return nil
 }
 
 func (q *queueManager) onConnect(client mqtt.Client) {

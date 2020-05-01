@@ -1,0 +1,5 @@
+MQTTServer = "127.0.0.1"
+MQTTUsername = "mqtt_user"
+MQTTPassword = "mqtt_pass"
+SerialPort = "/dev/ttyUSB0"
+BaseTopic = "SAIDA0"

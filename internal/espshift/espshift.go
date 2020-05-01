@@ -115,7 +115,7 @@ func (sd *serialDevice) Reset() error {
 }
 
 func (sd *serialDevice) HealthCheck() error {
-	log.Debug("Sending HEALTHCHECK")
+	//log.Debug("Sending HEALTHCHECK")
 	cmd := &shift.CmdMsg{
 		Cmd: shift.CmdMsg_HealthCheck,
 	}
@@ -144,7 +144,7 @@ func (sd *serialDevice) SetByte(byteNum uint8, val uint8) error {
 }
 
 func (sd *serialDevice) Status() (shift.BoardStatus, error) {
-	log.Debug("Sending STATUS")
+	//log.Debug("Sending STATUS")
 	var line []byte
 	cmd := &shift.CmdMsg{
 		Cmd: shift.CmdMsg_Status,
