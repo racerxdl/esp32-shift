@@ -11,7 +11,7 @@ var log = slog.Scope("Test Program")
 
 func main() {
 	var status shift.BoardStatus
-	esp, err := espshift.MakeESPShift("/dev/ttyUSB0")
+	esp, err := espshift.MakeESPShift("/dev/ttyUSB0", true)
 
 	if err != nil {
 		panic(err)

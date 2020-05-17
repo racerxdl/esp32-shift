@@ -25,7 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	dev, err := espshift.MakeESPShift(config.SerialPort)
+	dev, err := espshift.MakeESPShift(config.SerialPort, config.StartsWithOne)
 
 	if err != nil {
 		log.Fatal(err)

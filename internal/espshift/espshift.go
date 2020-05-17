@@ -21,11 +21,12 @@ const (
 )
 
 type serialDevice struct {
-	port       io.ReadWriteCloser
-	lineReader *bufio.Reader
+	port          io.ReadWriteCloser
+	lineReader    *bufio.Reader
+	startsWithOne bool
 }
 
-func MakeESPShift(device string) (shift.ESPShift, error) {
+func MakeESPShift(device string, startsWithOne bool) (shift.ESPShift, error) {
 	options := serial.OpenOptions{
 		PortName:              device,
 		BaudRate:              115200,
@@ -42,8 +43,9 @@ func MakeESPShift(device string) (shift.ESPShift, error) {
 	}
 
 	esp := &serialDevice{
-		port:       port,
-		lineReader: bufio.NewReader(port),
+		port:          port,
+		lineReader:    bufio.NewReader(port),
+		startsWithOne: startsWithOne,
 	}
 
 	log.Debug("Checking liveness")
@@ -124,6 +126,9 @@ func (sd *serialDevice) HealthCheck() error {
 }
 
 func (sd *serialDevice) SetPin(pin uint8, val shift.IOLevel) error {
+	if sd.startsWithOne && pin > 0 {
+		pin -= 1
+	}
 	log.Debug("Sending SETPIN(%d, %s)", pin, val)
 	cmd := &shift.CmdMsg{
 		Cmd:  shift.CmdMsg_SetPin,

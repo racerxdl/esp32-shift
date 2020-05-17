@@ -9,8 +9,9 @@ import (
 
 type Config struct {
 	queue.MQTTConfig
-	SerialPort string
-	BaseTopic  string
+	SerialPort    string
+	BaseTopic     string
+	StartsWithOne bool
 }
 
 const configFile = "espshift.toml"
