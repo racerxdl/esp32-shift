@@ -20,7 +20,7 @@ uint8_t curPos = 0;
 uint8_t bstate[NUM_REGISTERS];
 
 uint8_t connstatus[NUM_REGISTERS/2];
-int     connpins[NUM_REGISTERS/2] = { 34, 35, 22, 33 };
+int     connpins[NUM_REGISTERS/2] = { 34, 35, 32, 33 };
 
 SPIClass * vspi = NULL;
 static const int spiClk = 10000000; // 10 MHz
